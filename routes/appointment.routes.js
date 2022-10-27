@@ -10,8 +10,8 @@ router.get("/appointments", isAuthenticated, (req, res, next) => {
   if (req.payload.role === "secretary") search = {};
 
   Appointment.find(search)
-    // .populate("patient")
-    // .populate("therapist")
+    .populate("patient")
+    .populate("therapist")
     .then((allAppointments) => res.json(allAppointments))
     .catch((err) => {
       res.status(500).json({
@@ -30,15 +30,6 @@ router.post("/appointments", isAuthenticated, (req, res, next) => {
     notes: req.body.notes,
   };
   Appointment.create(newAppointment)
-    .then((newAppointment) => {
-      return Patient.findByIdAndUpdate(
-        newAppointment.patient,
-        {
-          $push: { appointments: newAppointment._id },
-        },
-        { new: true }
-      );
-    })
     .then((response) => res.json(response))
     .catch((err) => {
       res.status(500).json({
@@ -59,8 +50,8 @@ router.get(
     }
 
     Appointment.findById(appointmentId)
-      // .populate("therapist")
-      // .populate("patient")
+      .populate("therapist")
+      .populate("patient")
       .then((appointment) => res.status(200).json(appointment))
       .catch((err) => {
         res.status(500).json({
@@ -112,16 +103,7 @@ router.delete(
     }
 
     Appointment.findByIdAndDelete(appointmentId)
-      .then((appointment) => {
-        return Patient.findByIdAndUpdate(
-          appointment.patient,
-          {
-            $pull: { appointments: appointment._id },
-          },
-          { new: true }
-        );
-      })
-      .then((response) => {
+      .then(() => {
         res.json({
           message: `Appointment with ${appointmentId} is removed successfully.`,
         });
