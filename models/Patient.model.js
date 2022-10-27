@@ -23,15 +23,15 @@ const patientSchema = new Schema(
       unique: true,
       trim: true,
     },
-    medications: {
+    medications: [{
       type: String,
       default: "No medications yet"
-    },
-    diagnostics: {
+    }],
+    diagnoses: [{
       type: String,
       required: true,
-      default: "No diagnostics yet"
-    },
+      default: "No diagnoses yet"
+    }],
     appointments: [
       {
         type: Schema.Types.ObjectId,
