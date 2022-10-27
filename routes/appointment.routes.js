@@ -7,12 +7,10 @@ const Appointment = require("../models/Appointment");
 
 // GET ALL THE APPOINTMENTS
 router.get("/appointments", isAuthenticated, (req, res, next) => {
-  let search = {};
-  if (req.payload.role !== roles.secretary) {
-    search = { therapist: req.payload._id };
-  }
+  let search = { therapist: req.payload._id };
+  if (req.payload.role === roles.secretary) search = {};
 
-  Appointment.find()
+  Appointment.find(search)
     .populate("patient")
     .populate("therapist")
     .then((allAppointments) => res.json(allAppointments))
@@ -47,7 +45,7 @@ router.get(
       return;
     }
 
-    Appointment.findById({ _id: appointmentId, therapist: req.payload._id })
+    Appointment.findById(appointmentId)
       .populate("patient")
       .then((appointment) => res.status(200).json(appointment))
       .catch((err) => {
@@ -69,11 +67,7 @@ router.put(
       return;
     }
 
-    Appointment.findOneAndUpdate(
-      { _id: appointmentId, therapist: req.payload._id },
-      req.body,
-      { new: true }
-    )
+    Appointment.findByIdAndUpdate(appointmentId, req.body, { new: true })
       .then((updatedAppointment) => res.json(updatedAppointment))
       .catch((err) => {
         res.status(500).json({
@@ -94,10 +88,7 @@ router.delete(
       return;
     }
 
-    Appointment.findOneAndUpdate({
-      _id: appointmentId,
-      therapist: req.payload._id,
-    })
+    Appointment.findByIdAndDelete(appointmentId)
       .then(() =>
         res.json({
           message: `Appointment with ${appointmentId} is removed successfully.`,
