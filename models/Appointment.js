@@ -16,6 +16,7 @@ const appointmentSchema = new Schema(
     },
     isPaid: {
       type: Boolean,
+      default: false
     },
     recurring: {
       type: String,

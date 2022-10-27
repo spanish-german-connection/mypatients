@@ -31,14 +31,7 @@ const patientSchema = new Schema(
       type: String,
       required: true,
       default: "No diagnoses yet"
-    }],
-    appointments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Appointment",
-        default: "No appointments yet",
-      },
-    ]
+    }]
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
