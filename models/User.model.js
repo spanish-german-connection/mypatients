@@ -30,13 +30,6 @@ const userSchema = new Schema(
         default: "No patients yet",
       },
     ],
-    appointments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Appointment",
-        default: "No appointments yet",
-      },
-    ],
     posts: [
       {
         type: Schema.Types.ObjectId,

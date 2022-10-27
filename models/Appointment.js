@@ -12,7 +12,7 @@ const appointmentSchema = new Schema(
     },
     therapist: {
       type: Schema.Types.ObjectId,
-      ref: "Patient",
+      ref: "User",
     },
     isPaid: {
       type: Boolean,
