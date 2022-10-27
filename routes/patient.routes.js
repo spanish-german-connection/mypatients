@@ -3,13 +3,14 @@ const router = require("express").Router();
 const mongoose = require('mongoose');
 
 const Patient = require('../models/Patient.model');
+const User = require('../models/User.model');
 
 // Require necessary (isAuthenticated) middleware in order to control access to specific routes
 const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 
 
 // GET /api/patients  -  Get list of patients
-router.get('/patients', (req, res, next) => {
+router.get('/patients', isAuthenticated, (req, res, next) => {
     Patient.find()
         .then(allPatients => {
             res.json(allPatients)
@@ -24,7 +25,7 @@ router.get('/patients', (req, res, next) => {
 });
 
 // GET /api/patients/:patientId -  Retrieves a specific patient by id
-router.get('/patients/:patientId', (req, res, next) => {
+router.get('/patients/:patientId', isAuthenticated, (req, res, next) => {
     const { patientId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(patientId)) {
@@ -32,10 +33,7 @@ router.get('/patients/:patientId', (req, res, next) => {
         return;
     }
 
-    // Each patient document has `appointment` array holding `_id`s of appointment documents
-    // We use .populate() method to get swap the `_id`s for the actual appointment documents
     Patient.findById(patientId)
-        .populate('appointments')
         .then(patient => res.json(patient))
         .catch(err => {
             console.log("error getting patient details...", err);
@@ -75,7 +73,8 @@ router.post('/patients', isAuthenticated, (req, res, next) => {
         email,
         phone,
         medications,
-        diagnostics } = req.body;
+        diagnoses
+    } = req.body;
 
     const newPatient = {
         name,
@@ -83,20 +82,32 @@ router.post('/patients', isAuthenticated, (req, res, next) => {
         email,
         phone,
         medications,
-        diagnostics,
-        appointments: []
+        diagnoses
     };
 
+
+    const userId = req.payload._id;
+    console.log("ID: " + userId);
+
     Patient.create(newPatient)
-        .then(response => res.json(response))
-        .catch(err => {
-            console.log("error creating a new patient...", err);
+        .then((newPatient) => {
+            return User.findByIdAndUpdate(
+
+                userId,
+                {
+                    $push: { patients: newPatient._id },
+                },
+                { new: true }
+            );
+        })
+        .then((response) => res.json(response))
+        .catch((err) => {
             res.status(500).json({
                 message: "error creating a new patient",
                 error: err
-            })
-        }
-        );
+            });
+        });
+
 });
 
 
