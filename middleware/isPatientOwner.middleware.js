@@ -1,10 +1,11 @@
 const Patient = require("../models/Patient.model");
 
-const isPatientOwner = () => {
+const isPatientOwner = (req, res, next) => {
   const { patientId } = req.params;
-
+i
   Patient.findById(patientId).then((patient) => {
-    if (patient.therapist === req.payload._id) {
+    
+    if (String(patient.therapist) === req.payload._id) {
       next();
     } else {
       res.status(401).json({ message: "Unauthorized to manage this patient" });
