@@ -8,6 +8,7 @@ const {
   isAppointOwner,
 } = require("../middleware/isAppointOwner.middleware.js");
 
+// GET /api/appointments  -  Get list of appointments
 router.get("/appointments", isAuthenticated, (req, res, next) => {
   Appointment.find({ therapist: req.payload._id })
     .populate("patient")
@@ -20,27 +21,7 @@ router.get("/appointments", isAuthenticated, (req, res, next) => {
     });
 });
 
-router.post("/appointments", isAuthenticated, (req, res, next) => {
-  const { date, patient, isPaid, recurring, notes } = req.body;
-
-  const therapist = req.payload._id;
-  const newAppointment = {
-    date,
-    patient,
-    isPaid,
-    recurring,
-    notes,
-    therapist,
-  };
-  Appointment.create(newAppointment)
-    .then((response) => res.json(response))
-    .catch((err) => {
-      res.status(500).json({
-        error: err,
-      });
-    });
-});
-
+// GET /api/appointments/:appointmentId -  Retrieves a specific appointment by id
 router.get(
   "/appointments/:appointmentId",
   isAuthenticated,
@@ -65,6 +46,29 @@ router.get(
   }
 );
 
+// POST /api/appointments  -  Creates a new appointments
+router.post("/appointments", isAuthenticated, (req, res, next) => {
+  const { date, patient, isPaid, recurring, notes } = req.body;
+
+  const therapist = req.payload._id;
+  const newAppointment = {
+    date,
+    patient,
+    isPaid,
+    recurring,
+    notes,
+    therapist,
+  };
+  Appointment.create(newAppointment)
+    .then((response) => res.json(response))
+    .catch((err) => {
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+// PUT  /api/appointments/:appointmentId  -  Updates a specific appointment by id
 router.put(
   "/appointments/:appointmentId",
   isAuthenticated,
@@ -96,6 +100,7 @@ router.put(
   }
 );
 
+// DELETE  /api/appointments/:appointmentId  -  Deletes a specific appointment by id
 router.delete(
   "/appointments/:appointmentId",
   isAuthenticated,
