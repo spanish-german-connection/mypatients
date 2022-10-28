@@ -76,7 +76,7 @@ router.put(
 
 // POST /api/patients  -  Creates a new patient
 router.post("/patients", isAuthenticated, (req, res, next) => {
-  const { name, surname, email, phone, medications, diagnoses } = req.body;
+  const { name, surname, email, phone, medications, diagnoses, therapistId } = req.body;
 
   const newPatient = {
     name,
@@ -85,21 +85,13 @@ router.post("/patients", isAuthenticated, (req, res, next) => {
     phone,
     medications,
     diagnoses,
+    therapistId
   };
 
   const userId = req.payload._id;
   console.log("ID: " + userId);
 
   Patient.create(newPatient)
-    .then((newPatient) => {
-      return User.findByIdAndUpdate(
-        userId,
-        {
-          $push: { patients: newPatient._id },
-        },
-        { new: true }
-      );
-    })
     .then((response) => res.json(response))
     .catch((err) => {
       res.status(500).json({
