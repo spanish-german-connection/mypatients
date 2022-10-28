@@ -23,13 +23,6 @@ const userSchema = new Schema(
       lowercase: true,
       default: "therapist",
     },
-    patients: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Patient",
-        default: "No patients yet",
-      },
-    ],
     posts: [
       {
         type: Schema.Types.ObjectId,

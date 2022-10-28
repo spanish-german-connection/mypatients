@@ -7,10 +7,11 @@ const User = require("../models/User.model");
 
 // Require necessary (isAuthenticated) middleware in order to control access to specific routes
 const { isAuthenticated } = require("../middleware/jwt.middleware.js");
+const { isPatientOwner } = require("../middleware/isPatientOwner.middleware");
 
 // GET /api/patients  -  Get list of patients
 router.get("/patients", isAuthenticated, (req, res, next) => {
-  Patient.find()
+  Patient.find({ therapist: req.payload._id })
     .then((allPatients) => {
       res.json(allPatients);
     })
@@ -24,7 +25,7 @@ router.get("/patients", isAuthenticated, (req, res, next) => {
 });
 
 // GET /api/patients/:patientId -  Retrieves a specific patient by id
-router.get("/patients/:patientId", isAuthenticated, (req, res, next) => {
+router.get("/patients/:patientId", isAuthenticated, isPatientOwner, (req, res, next) => {
   const { patientId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(patientId)) {
@@ -44,7 +45,7 @@ router.get("/patients/:patientId", isAuthenticated, (req, res, next) => {
 });
 
 // PUT  /api/patients/:patientId  -  Updates a specific patient by id
-router.put("/patients/:patientId", isAuthenticated, (req, res, next) => {
+router.put("/patients/:patientId", isAuthenticated,isPatientOwner, (req, res, next) => {
   const { patientId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(patientId)) {

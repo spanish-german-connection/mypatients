@@ -4,12 +4,12 @@ const router = require("express").Router();
 const mongoose = require("mongoose");
 const Appointment = require("../models/Appointment");
 const Patient = require("../models/Patient.model.js");
+const {
+  isAppointOwner,
+} = require("../middleware/isAppointOwner.middleware.js");
 
 router.get("/appointments", isAuthenticated, (req, res, next) => {
-  let search = { therapist: req.payload._id };
-  if (req.payload.role === "secretary") search = {};
-
-  Appointment.find(search)
+  Appointment.find({ therapist: req.payload._id })
     .populate("patient")
     .populate("therapist")
     .then((allAppointments) => res.json(allAppointments))
@@ -41,6 +41,7 @@ router.post("/appointments", isAuthenticated, (req, res, next) => {
 router.get(
   "/appointments/:appointmentId",
   isAuthenticated,
+  isAppointOwner,
   (req, res, next) => {
     const { appointmentId } = req.params;
 
@@ -64,6 +65,7 @@ router.get(
 router.put(
   "/appointments/:appointmentId",
   isAuthenticated,
+  isAppointOwner,
   (req, res, next) => {
     const { appointmentId } = req.params;
 
@@ -94,6 +96,7 @@ router.put(
 router.delete(
   "/appointments/:appointmentId",
   isAuthenticated,
+  isAppointOwner,
   (req, res, next) => {
     const { appointmentId } = req.params;
 

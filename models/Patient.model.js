@@ -23,15 +23,23 @@ const patientSchema = new Schema(
       unique: true,
       trim: true,
     },
-    medications: [{
-      type: String,
-      default: "No medications yet"
-    }],
-    diagnoses: [{
-      type: String,
-      required: true,
-      default: "No diagnoses yet"
-    }]
+    therapist: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    medications: [
+      {
+        type: String,
+        default: "No medications yet",
+      },
+    ],
+    diagnoses: [
+      {
+        type: String,
+        required: true,
+        default: "No diagnoses yet",
+      },
+    ],
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
