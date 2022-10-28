@@ -21,13 +21,16 @@ router.get("/appointments", isAuthenticated, (req, res, next) => {
 });
 
 router.post("/appointments", isAuthenticated, (req, res, next) => {
+  const { date, patient, isPaid, recurring, notes } = req.body;
+
+  const therapist = req.payload._id;
   const newAppointment = {
-    date: req.body.date,
-    therapist: req.body.therapistId,
-    patient: req.body.patientId,
-    isPaid: req.body.isPaid,
-    recurring: req.body.recurring,
-    notes: req.body.notes,
+    date,
+    patient,
+    isPaid,
+    recurring,
+    notes,
+    therapist,
   };
   Appointment.create(newAppointment)
     .then((response) => res.json(response))

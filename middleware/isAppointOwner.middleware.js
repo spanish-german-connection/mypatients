@@ -1,10 +1,10 @@
 const Appointment = require("../models/Appointment");
 
-const isAppointOwner = () => {
+const isAppointOwner = (req, res, next) => {
   const { appointmentId } = req.params;
 
   Appointment.findById(appointmentId).then((appointment) => {
-    if (appointment.therapist === req.payload._id) {
+    if (String(appointment.therapist) === req.payload._id) {
       next();
     } else {
       res
