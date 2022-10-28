@@ -10,7 +10,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 const { isPatientOwner } = require("../middleware/isPatientOwner.middleware");
 
 // GET /api/patients  -  Get list of patients
-router.get("/patients", isAuthenticated, (req, res, next) => {
+router.get("/patients", isAuthenticated, isPatientOwner, (req, res, next) => {
   Patient.find({ therapist: req.payload._id })
     .then((allPatients) => {
       res.json(allPatients);
@@ -78,6 +78,7 @@ router.put(
 router.post("/patients", isAuthenticated, (req, res, next) => {
   const { name, surname, email, phone, medications, diagnoses } = req.body;
 
+  const therapist = req.payload._id;
   const newPatient = {
     name,
     surname,
@@ -85,21 +86,11 @@ router.post("/patients", isAuthenticated, (req, res, next) => {
     phone,
     medications,
     diagnoses,
+    therapist
   };
 
-  const userId = req.payload._id;
-  console.log("ID: " + userId);
 
   Patient.create(newPatient)
-    .then((newPatient) => {
-      return User.findByIdAndUpdate(
-        userId,
-        {
-          $push: { patients: newPatient._id },
-        },
-        { new: true }
-      );
-    })
     .then((response) => res.json(response))
     .catch((err) => {
       res.status(500).json({
