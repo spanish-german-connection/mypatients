@@ -91,12 +91,13 @@ router.put(
 
 // POST /api/patients  -  Creates a new patient
 router.post("/patients", isAuthenticated, (req, res, next) => {
-  const { name, surname, email, phone, medications, diagnoses } = req.body;
+  const { name, surname, dateOfBirth, email, phone, medications, diagnoses } = req.body;
 
   const therapist = req.payload._id;
   const newPatient = {
     name,
     surname,
+    dateOfBirth,
     email,
     phone,
     medications,
