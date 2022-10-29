@@ -12,6 +12,7 @@ const { isPatientOwner } = require("../middleware/isPatientOwner.middleware");
 // GET /api/patients  -  Get list of patients
 router.get("/patients", isAuthenticated, (req, res, next) => {
   Patient.find({ therapist: req.payload._id })
+    .populate("therapist")
     .then((allPatients) => {
       res.json(allPatients);
     })
@@ -38,6 +39,7 @@ router.get(
     }
 
     Patient.findById(patientId)
+      .populate("therapist")
       .then((patient) => res.json(patient))
       .catch((err) => {
         console.log("error getting patient details...", err);
