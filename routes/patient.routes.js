@@ -69,7 +69,6 @@ router.put(
       .then((foundPatient) => {
         // If a patient with the same email or phone number already exists, send an error response
         if (foundPatient) {
-          console.log("foundPatient>>>", foundPatient);
           const errorMessage =
             foundPatient.email === email
               ? "Email already in use."

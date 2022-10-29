@@ -48,12 +48,12 @@ router.get(
 
 // POST /api/appointments  -  Creates a new appointments
 router.post("/appointments", isAuthenticated, (req, res, next) => {
-  const { date, patient, isPaid, recurring, notes } = req.body;
+  const { date, patientId, isPaid, recurring, notes } = req.body;
 
   const therapist = req.payload._id;
   const newAppointment = {
     date,
-    patient,
+    patient: patientId,
     isPaid,
     recurring,
     notes,

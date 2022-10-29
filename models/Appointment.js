@@ -4,15 +4,7 @@ const appointmentSchema = new Schema(
   {
     date: {
       type: Date,
-      required: true,
-    },
-    patient: {
-      type: Schema.Types.ObjectId,
-      ref: "Patient",
-    },
-    therapist: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      required: [true, "Date is required."],
     },
     isPaid: {
       type: Boolean,
@@ -24,6 +16,14 @@ const appointmentSchema = new Schema(
     },
     notes: {
       type: String,
+    },
+    patient: {
+      type: Schema.Types.ObjectId,
+      ref: "Patient",
+    },
+    therapist: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   {
