@@ -2,9 +2,8 @@ const Patient = require("../models/Patient.model");
 
 const isPatientOwner = (req, res, next) => {
   const { patientId } = req.params;
-i
+
   Patient.findById(patientId).then((patient) => {
-    
     if (String(patient.therapist) === req.payload._id) {
       next();
     } else {

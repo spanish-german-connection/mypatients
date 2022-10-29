@@ -62,7 +62,23 @@ router.put(
       return;
     }
 
-    Patient.findByIdAndUpdate(patientId, req.body, { new: true })
+    const { email, phone } = req.body;
+    Patient.findOne({
+      $or: [{ email }, { phone }],
+    })
+      .then((foundPatient) => {
+        // If a patient with the same email or phone number already exists, send an error response
+        if (foundPatient) {
+          console.log("foundPatient>>>", foundPatient);
+          const errorMessage =
+            foundPatient.email === email
+              ? "Email already in use."
+              : "Phone number already in use.";
+          res.status(400).json({ message: errorMessage });
+          return;
+        }
+        return Patient.findByIdAndUpdate(patientId, req.body, { new: true });
+      })
       .then((updatedPatient) => res.json(updatedPatient))
       .catch((err) => {
         console.log("error updating patient...", err);
@@ -89,7 +105,21 @@ router.post("/patients", isAuthenticated, (req, res, next) => {
     therapist,
   };
 
-  Patient.create(newPatient)
+  Patient.findOne({
+    $or: [{ email }, { phone }],
+  })
+    .then((foundPatient) => {
+      // If a patient with the same email or phone number already exists, send an error response
+      if (foundPatient) {
+        const errorMessage =
+          foundPatient.email === email
+            ? "Email already in use."
+            : "Phone number already in use.";
+        res.status(400).json({ message: errorMessage });
+        return;
+      }
+      return Patient.create(newPatient);
+    })
     .then((response) => res.json(response))
     .catch((err) => {
       res.status(500).json({
