@@ -10,6 +10,12 @@ const patientSchema = new Schema(
       type: String,
       required: [true, "Surname is required."],
     },
+    dateOfBirth: {
+      type: Date,
+      required: [true, "The date of birth is required."],
+      min: '1920-01-01',
+      max: '2020-01-01',
+    },
     email: {
       type: String,
       required: [true, "Email is required."],
