@@ -11,6 +11,7 @@ const {
 // GET /api/appointments  -  Get list of appointments
 router.get("/appointments", isAuthenticated, (req, res, next) => {
   Appointment.find({ therapist: req.payload._id })
+    .sort({ date: -1 })
     .populate("patient")
     .populate("therapist")
     .then((allAppointments) => res.json(allAppointments))
