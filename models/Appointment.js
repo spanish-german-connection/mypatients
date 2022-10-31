@@ -6,6 +6,14 @@ const appointmentSchema = new Schema(
       type: Date,
       required: [true, "Date is required."],
     },
+    // startdate: {
+    //   type: Date,
+    //   required: [true, "Start date is required."],
+    // },
+    // enddate: {
+    //   type: Date,
+    //   required: [true, "End date is required."],
+    // },
     isPaid: {
       type: Boolean,
       default: false,
