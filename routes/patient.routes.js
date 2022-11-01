@@ -65,18 +65,23 @@ router.put(
     }
 
     const { email, phone } = req.body;
-    Patient.findOne({
-      $or: [{ email }, { phone }],
-    })
+
+    let errorMessage = "";
+
+    Patient.findOne({ email })
       .then((foundPatient) => {
-        // If a patient with the same email or phone number already exists, send an error response
         if (foundPatient) {
-          const errorMessage =
-            foundPatient.email === email
-              ? "Email already in use."
-              : "Phone number already in use.";
-          res.status(400).json({ message: errorMessage });
-          return;
+          if (String(foundPatient._id) !== String(patientId)) {
+            errorMessage = "Email already in use."
+          }
+        }
+        return Patient.findOne({ phone });
+      })
+      .then((foundPatient) => {
+        if (foundPatient) {
+          if (String(foundPatient._id) !== String(patientId)) {
+            errorMessage = "Phone already in use.";
+          }
         }
         return Patient.findByIdAndUpdate(patientId, req.body, { new: true });
       })
@@ -84,8 +89,8 @@ router.put(
       .catch((err) => {
         console.log("error updating patient...", err);
         res.status(500).json({
-          message: "error updating patient...",
-          error: err,
+          message: `error updating patient: ${errorMessage}`
+          // ,error: err,
         });
       });
   }
