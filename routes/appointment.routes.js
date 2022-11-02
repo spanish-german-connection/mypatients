@@ -16,6 +16,7 @@ router.get("/appointments", isAuthenticated, (req, res, next) => {
     .populate("therapist")
     .then((allAppointments) => res.json(allAppointments))
     .catch((err) => {
+      console.log("error getting list of appointments...", err);
       res.status(500).json({
         error: err,
       });
@@ -40,6 +41,7 @@ router.get(
       .populate("patient")
       .then((appointment) => res.status(200).json(appointment))
       .catch((err) => {
+        console.log("error retrieving a specific appointment by id...", err);
         res.status(500).json({
           error: err,
         });
@@ -80,6 +82,7 @@ router.post("/appointments", isAuthenticated, (req, res, next) => {
     })
     .then((response) => res.json(response))
     .catch((err) => {
+      console.log("error creating a new appointment...", err);
       res.status(500).json({
         error: err,
       });
@@ -133,6 +136,7 @@ router.put(
       })
       .then((response) => res.json(response))
       .catch((err) => {
+        console.log("error updating an appointment...", err);
         res.status(500).json({
           error: err,
         });
@@ -160,6 +164,7 @@ router.delete(
         });
       })
       .catch((err) => {
+        console.log("error deleting an appointment...", err);
         res.status(500).json({
           error: err,
         });
