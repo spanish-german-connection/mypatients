@@ -89,8 +89,7 @@ router.put(
       .catch((err) => {
         console.log("error updating patient...", err);
         res.status(500).json({
-          message: `error updating patient: ${errorMessage}`
-          // ,error: err,
+          message: errorMessage
         });
       });
   }
