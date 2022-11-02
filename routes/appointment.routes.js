@@ -1,9 +1,9 @@
 const { isAuthenticated } = require("../middleware/jwt.middleware.js");
-
 const router = require("express").Router();
 const mongoose = require("mongoose");
 const Appointment = require("../models/Appointment");
-const Patient = require("../models/Patient.model.js");
+const dayjs = require("dayjs");
+
 const {
   isAppointOwner,
 } = require("../middleware/isAppointOwner.middleware.js");
@@ -60,7 +60,25 @@ router.post("/appointments", isAuthenticated, (req, res, next) => {
     notes,
     therapist,
   };
-  Appointment.create(newAppointment)
+
+  Appointment.findOne({
+    date: {
+      $gt: dayjs(date).subtract(1, "hour"),
+      $lt: dayjs(date).add(1, "hour"),
+    },
+  })
+    .then((foundAppointment) => {
+      console.log("foundAppointment>>>", foundAppointment);
+      // If an appointment already exists for the current date (considering an appointment last 1 hour)
+      // send an error response
+      if (foundAppointment) {
+        res.status(400).json({
+          message: "An appointment already exists in this date.",
+        });
+        return;
+      }
+      return Appointment.create(newAppointment);
+    })
     .then((response) => res.json(response))
     .catch((err) => {
       res.status(500).json({
