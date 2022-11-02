@@ -68,7 +68,6 @@ router.post("/appointments", isAuthenticated, (req, res, next) => {
     },
   })
     .then((foundAppointment) => {
-      console.log("foundAppointment>>>", foundAppointment);
       // If an appointment already exists for the current date (considering an appointment last 1 hour)
       // send an error response
       if (foundAppointment) {
@@ -93,13 +92,14 @@ router.put(
   isAuthenticated,
   isAppointOwner,
   (req, res, next) => {
+    const { date, isPaid, recurring, notes, patientId } = req.body;
     const { appointmentId } = req.params;
 
     const updatedAppointment = {
-      date: req.body.date,
-      isPaid: req.body.isPaid,
-      recurring: req.body.recurring,
-      notes: req.body.notes,
+      date,
+      isPaid,
+      recurring,
+      notes,
     };
 
     if (!mongoose.Types.ObjectId.isValid(appointmentId)) {
@@ -107,10 +107,31 @@ router.put(
       return;
     }
 
-    Appointment.findByIdAndUpdate(appointmentId, updatedAppointment, {
-      new: true,
+    Appointment.findOne({
+      date: {
+        $gt: dayjs(date).subtract(1, "hour"),
+        $lt: dayjs(date).add(1, "hour"),
+      },
+      patient: { $ne: patientId },
     })
-      .then((updatedAppointment) => res.json(updatedAppointment))
+      .then((foundAppointment) => {
+        // If an appointment already exists for the current date (considering an appointment last 1 hour)
+        // send an error response
+        if (foundAppointment) {
+          res.status(400).json({
+            message: "An appointment already exists in this date.",
+          });
+          return;
+        }
+        return Appointment.findByIdAndUpdate(
+          appointmentId,
+          updatedAppointment,
+          {
+            new: true,
+          }
+        );
+      })
+      .then((response) => res.json(response))
       .catch((err) => {
         res.status(500).json({
           error: err,
