@@ -13,6 +13,7 @@ const { isPatientOwner } = require("../middleware/isPatientOwner.middleware");
 router.get("/patients", isAuthenticated, (req, res, next) => {
   Patient.find({ therapist: req.payload._id })
     .populate("therapist")
+    .sort({ name: 1 })
     .then((allPatients) => {
       res.json(allPatients);
     })
@@ -68,11 +69,12 @@ router.put(
 
     let errorMessage = "";
 
+    // TODO: we can use a mongo $or condition here to send just one query to the database
     Patient.findOne({ email })
       .then((foundPatient) => {
         if (foundPatient) {
           if (String(foundPatient._id) !== String(patientId)) {
-            errorMessage = "Email already in use."
+            errorMessage = "Email already in use.";
           }
         }
         return Patient.findOne({ phone });
@@ -89,7 +91,7 @@ router.put(
       .catch((err) => {
         console.log("error updating patient...", err);
         res.status(500).json({
-          message: errorMessage
+          message: errorMessage,
         });
       });
   }
@@ -97,7 +99,8 @@ router.put(
 
 // POST /api/patients  -  Creates a new patient
 router.post("/patients", isAuthenticated, (req, res, next) => {
-  const { name, surname, dateOfBirth, email, phone, diagnoses, medications } = req.body;
+  const { name, surname, dateOfBirth, email, phone, diagnoses, medications } =
+    req.body;
 
   const therapist = req.payload._id;
   const newPatient = {
