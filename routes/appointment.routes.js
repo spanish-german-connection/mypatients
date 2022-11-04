@@ -68,6 +68,7 @@ router.post("/appointments", isAuthenticated, (req, res, next) => {
       $gt: dayjs(date).subtract(1, "hour"),
       $lt: dayjs(date).add(1, "hour"),
     },
+    therapist,
   })
     .then((foundAppointment) => {
       // If an appointment already exists for the current date (considering an appointment last 1 hour)
@@ -116,6 +117,7 @@ router.put(
         $lt: dayjs(date).add(1, "hour"),
       },
       patient: { $ne: patientId },
+      therapist: req.payload._id,
     })
       .then((foundAppointment) => {
         // If an appointment already exists for the current date (considering an appointment last 1 hour)
