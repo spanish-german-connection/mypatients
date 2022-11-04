@@ -14,7 +14,7 @@ In order to run this application you need to add this environment variable to th
 
 # Demo
 
-The live api is running in [https://adaptable.io/](https://adaptable.io/) and published with Postman [here](https://documenter.getpostman.com/view/992211/2s8YYCsjmw#b7deafc8-35b8-470e-806b-59b3f87cf15b) so it can be tested by anyone
+The live api is running in [https://adaptable.io/](https://adaptable.io/) and published with Postman [here](https://documenter.getpostman.com/view/992211/2s8YYCsjmw#b7deafc8-35b8-470e-806b-59b3f87cf15b) so it can be tested by anyone (select Ironhack as workspace, and also Ironhack as the environment)
 
 # Author
 
